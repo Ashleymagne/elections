@@ -1,0 +1,1228 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Vote Cameroun - Élections Nationales</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+
+        /* Styles personnalisés pour le thème Cameroun et l'effet Waouh */
+        .bg-accueil{
+            background-image: url(images/yaounde.png);
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+        .bg-vote{
+            background: linear-gradient(135deg, var(--bs-success)0%, var(--bs-success)33%, var(--bs-danger)33%, var(--bs-danger)66%, var(--bs-warning)66%, var(--bs-warning)100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        .header-band {
+            height: 5px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .green-strip { background-color: #007A5E; width: 33.33%; height: 100%; } /* Vert */
+        .red-strip { 
+            background-color: #CE1126; 
+            width: 33.33%; 
+            height: 100%; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        } /* Rouge */
+        .yellow-strip { background-color: #FCD116; width: 33.33%; height: 100%; } /* Jaune */
+        
+        /* Étoile Dorée Waouh */
+        /* .golden-star {
+            color: gold;
+            font-size: 24px;
+            position: absolute;
+            animation: pulse 1.5s infinite alternate; /* Effet de pulsation */
+           /* text-shadow: 0 0 10px gold; /* Effet de lueur */
+        /* } */ 
+        @keyframes pulse {
+            from { transform: scale(1); opacity: 1; }
+            to { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Classes de Couleurs CM */
+        .bg-green-cm { background-color: #007A5E !important; }
+        .btn-green-cm {
+            background-color: #007A5E; 
+            color: white;
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-green-cm:hover { background-color: #005643; color: white; transform: translateY(-2px); }
+        .text-green-cm { color: #007A5E !important; }
+
+        /* Effet Waouh sur les Cartes */
+        .card-wow {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 15px;
+        }
+        .card-wow:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.25);
+        }
+        
+        /* Messages de succès Waouh */
+        .alert-wow {
+            border-radius: 15px;
+            padding: 25px;
+            font-weight: bold;
+            text-align: center;
+            animation: fadeIn 0.5s;
+            box-shadow: 0 0 30px rgba(252, 209, 22, 0.5); /* Waouh glow */
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Section de Bienvenue Candidat */
+        #welcome-section {
+            background: linear-gradient(rgba(255, 0, 0, 1), rgba(255,255,0,1), rgba(0, 128, 0, 0.5)), url('images/vote.jpg') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 80px 20px;
+            border-radius: 15px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.7);
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        
+        /* Cercles de Statistiques Waouh */
+        .circle-stat {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 10px auto;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border: 5px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.5s ease;
+        }
+        .circle-stat:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        .circle-stat .value {
+            font-size: 2.5rem;
+            line-height: 1;
+        }
+
+        /* Masquer toutes les sections sauf la page d'accueil au début */
+        .page-content:not(#home-page) {
+            display: none;
+        }
+
+        .election-candidat:not(#presidentielle){
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <header  class="sticky-top  ">
+       
+
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top shadow-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#" onclick="showPage('home-page')"> <span class="text-warning"><i class="fas fa-vote-yea me-2"></i>  E-Vote</span> <span class="text-danger"> CM</span></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('home-page')"><i class="fas fa-home me-1"></i> Accueil</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('candidat-page')"><i class="fas fa-user-tie me-1"></i> Espace Candidat</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('vote-page')"><i class="fas fa-user-tie me-1"></i> Se Connecter & Voter</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('resultat-page')"><i class="fas fa-poll me-1"></i> Resultats</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#" onclick="showPage('help-page')"><i class="fas fa-question-circle me-1"></i> Aide</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="header-band shadow-sm mb-0">
+            <div class="green-strip"></div>
+            <div class="red-strip">
+                <!-- <i class="fas fa-star golden-star"></i> -->
+            </div>
+            <div class="yellow-strip"></div>
+        </div>
+    
+        <!-- <div class="d-flex align-items-center mb-0 container-fluid">
+            <span class="d-inline-block p-1 bg-success rounded-circle me-2"></span>
+            <span class="d-inline-block p-1 bg-danger rounded-circle me-2"></span>
+            <span class="d-inline-block p-1 bg-warning rounded-circle me-2"></span>
+            <h2 class="h5 fw-bold text-dark me-2 mb-0"><span class="text-danger "> PAIX</span>-<span class="text-warning"> TRAVAIL</span>- <span class="text-success"> PATRIE</span> </h2>
+        </div> -->
+
+    </header>
+
+
+
+    
+    <!-- <main class=" container-fluid "> -->
+
+       <!--accueil--> 
+        <section id="home-page" class="page-content text-white py-5 bg-dark" >
+        <div class=" ">
+            <div class="g-5">
+                <!-- Colonne de gauche : Texte et informations -->
+                <div class="text-lg-start">
+                   
+                    <h1 class="display-5 fw-bold my-5 text-center">
+                        Plateforme officielle des
+                        <!-- "text-warning" met ce texte en jaune/orange -->
+                        <span class="text-warning">élections au Cameroun</span>
+                    </h1>
+                    <!-- Paragraphe de description -->
+                    <p class="lead text-center hero-text">
+                        Suivez l’actualité électorale, consultez les candidats,
+                        vérifiez votre inscription, accédez aux résultats officiels
+                        et participez activement à la consolidation de la démocratie
+                        au Cameroun.
+                    </p>
+                    <!-- Boutons d'action -->
+                    <div class="d-flex flex-column flex-sm-row gap-4 justify-content-center justify-content-lg-center my-4">
+                        <!-- Bouton "Inscription electeur" (blanc avec bordure) -->
+                        <button class="btn btn-green-cm btn-lg mt-3 shadow" id="inscription-btn" data-bs-toggle="modal" data-bs-target="#inscriptionModal">
+                                    <i class="fas fa-sign-in-alt me-2"></i> S'inscrire Maintenant
+                                </button>
+                        <!-- Bouton "Se Connecter" (jaune) -->
+                        <button  class="btn btn-warning btn-lg mt-3 shadow" onclick="showPage('vote-page')"
+                         >
+                                    <i class="fas fa-sign-in-alt me-2"></i> se connecter
+                                </button>
+                    </div>
+                </div>
+                <!-- Colonne de droite : Diaporama d'images -->
+                <!-- <div class="col-lg-6"> -->
+                    <!-- Carousel/slid
+
+        <section id="home-page" class="page-content " >
+            <div class="bg-accueil">
+                <div class="row">
+                    <div class="col-12 text-center my-4">
+                        <h1 class="display-4 fw-bolder  text-danger"><i class="fas fa-landmark me-2"></i> Bienvenue, Citoyen Camerounais !</h1>
+                        <p class="lead mb-4 text-warning">Participez à la démocratie avec sécurité et transparence.</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-5 mb-4">
+                        <div class="card shadow-lg card-wow border-danger border-2">
+                            <div class="card-body p-5 text-center">
+                                <h2 class="card-title text-danger"><i class="fas fa-user-plus me-2"></i> Devenir Électeur</h2>
+                                <p class="card-text">Obtenez vos identifiants uniques et votre droit de vote pour les élections.
+                                </p>
+                                <button class="btn btn-green-cm btn-lg mt-3 shadow" id="inscription-btn" data-bs-toggle="modal" data-bs-target="#inscriptionModal">
+                                    <i class="fas fa-sign-in-alt me-2"></i> S'inscrire Maintenant
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-4">
+                        <div class="card shadow-lg card-wow border-warning border-2">
+                            <div class="card-body p-5 text-center">
+                                <h2 class="card-title text-warning"><i class="fas fa-gavel me-2"></i> Résultats Officiels</h2>
+                                <p class="card-text">Consultez ici les résultats validés par l'organe électoral à la fin du scrutin.</p>
+                                <div id="official-results" class="mt-3 alert alert-secondary shadow-sm">
+                                    <i class="fas fa-clock me-2"></i> Résultats finaux en attente de proclamation...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container my-5">
+                        <div class="row text-center mt-4 g-3">
+                            <div class="col-4 bg-dark">
+                                <div class="p-2 border rounded ">
+                                    <h5 class="fw-bold text-success mb-0 ">12M+</h5>
+                                    <small class="text-white">Électeurs deja inscrits</small>
+                                </div>
+                            </div>
+                            <div class="col-4 bg-dark">
+                                <div class="p-2 border rounded ">
+                                    <h5 class="fw-bold text-danger mb-0 ">25 000+</h5>
+                                    <small class="text-white">Bureaux de votes</small>
+                                </div>
+                            </div>
+                            <div class="col-4 bg-dark">
+                                <div class="p-2 border rounded ">
+                                    <h5 class="fw-bold text-warning mb-0 ">10</h5>
+                                    <small class="text-white">Régions</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- vainqueurs --> <!-- SECTION VAINQUEURS -->
+    <div class="bg-light py-5 text-dark position-relative overflow-hidden">
+        <div class="bg-light">
+            <h2 class="text-center fw-bolder my-4">Vainqueurs Des Election 2025</h2>
+            <div class="row">
+                <div class="col mb-3">
+                    <div class="card">
+                        <img src="images/vainqueur1.jpg" style="height: 300px;" class="card-img-top">
+                        <div class="card-body">
+                            <h4 class="card-title">Lesly</h4>
+                            <p class="card-text">Vainqueur Presidentielle 2025</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-3">
+                    <div class="card">
+                        <img src="images/vainqueur2.jpg" style="height: 300px;" class="card-img-top">2
+                        <div class="card-body">
+                            <h4 class="card-title">Patrice</h4>
+                            <p class="card-text">Vainqueur Senatoriale 2025</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-3">
+                    <div class="card">
+                        <img src="images/vainqueur3.jpg" style="height: 300px;" class="card-img-top">
+                        <div class="card-body">
+                            <h4 class="card-title">Ashley</h4>
+                            <p class="card-text">Vainqueur Municipale 2025</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-3">
+                    <div class="card">
+                        <img src="images/vainqueur4.jpg" style="height: 300px;" class="card-img-top">
+                        <div class="card-body">
+                            <h4 class="card-title">Omer</h4>
+                            <p class="card-text">Vainqueur Legislative 2025</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col mb-3">
+                    <div class="card">
+                        <img src="images/vainqueur5.jpg" style="height: 300px;" class="card-img-top">
+                        <div class="card-body">
+                            <h4 class="card-title">Wilfried</h4>
+                            <p class="card-text">Vainqueur Regionale 2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+      
+    
+
+            <!-- SECTION : COMPTE À REBOURS & PRÉPARATION CITOYENNE -->
+    <div class="bg-light py-5 text-dark position-relative overflow-hidden">
+
+        <!-- Image de fond discrète (drapeau en arrière-plan avec transparence) -->
+        <div class="position-absolute top-0 start-0 h-100 w-50" style="
+            background-image: url('/images/flag.jpg');
+            background-repeat: no-repeat;
+            background-position: left center;
+            background-size: contain;
+            opacity: 0.12;
+            z-index: 0;
+        "></div>
+
+        <!-- Contenu principal (au-dessus de l'image de fond) -->
+        <div class="container text-center position-relative my-5" style="z-index: 1;">
+            <!-- Badge "Prochain scrutin" -->
+            <span class="badge bg-danger fs-6 mb-3">Prochain scrutin</span>
+            <!-- Titre de la section -->
+            <h2 class="fw-bold mb-5">Préparez-vous à voter</h2>
+            <!-- Description -->
+            <p class="lead mb-5">
+                Vérifiez votre inscription et soyez prêt pour exercer votre droit citoyen.
+            </p>
+            <!-- Compte à rebours (jours, heures, minutes, secondes) -->
+            <div class="row justify-content-center g-3 mb-4">
+                <!-- Jours restants -->
+                <div class="col-6 col-md-2 rounded-5">
+                    <div class="p-3 border rounded shadow">
+                        <h3 id="days" class="fw-bold text-warning mb-2 h1 countdown-num">120</h3>
+                        <p class="mb-0">Jours</p>
+                    </div>
+                </div>
+                <!-- Heures restantes -->
+                <div class="col-6 col-md-2 rounded-5">
+                    <div class="p-3 border rounded shadow">
+                        <h3 id="hours" class="fw-bold text-warning mb-2 h1 countdown-num">10</h3>
+                        <p class="mb-0">Heures</p>
+                    </div>
+                </div>
+                <!-- Minutes restantes -->
+                <div class="col-6 col-md-2 rounded-5">
+                    <div class="p-3 border rounded shadow">
+                        <h3 id="minutes" class="fw-bold text-warning mb-2 h1 countdown-num">45</h3>
+                        <p class="mb-0">Minutes</p>
+                    </div>
+                </div>
+                <!-- Secondes restantes -->
+                <div class="col-6 col-md-2 rounded-5">
+                    <div class="p-3 border rounded shadow">
+                        <h3 id="seconds" class="fw-bold text-warning mb-2 h1 countdown-num">30</h3>
+                        <p class="mb-0">Secondes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <!-- garantir la transparence et la securite tout au long du srutin -->
+            <div class="bg-dark text-white py-5">
+                <div class="container py-5">
+                    <div class="row align-items-center gy-5">
+                        <div class="col-12 col-lg-6 text-center text-lg-start order-2 order-lg-1">
+                            <div class="mb-3">
+                                <span class="badge bg-success fs-6 me-2">Sécurité</span>
+                                <span class="badge bg-warning fs-6">Transparence</span>
+                            </div>
+                            <h2 class="fw-bold mb-4">
+                                Garantir des élections libres et sûres
+                            </h2>
+                            <p class="lead mb-4">
+                                ÉLECTIONS CM met en place toutes les mesures nécessaires pour sécuriser les scrutins et garantir
+                                une transparence totale à tous les niveaux.
+                            </p>
+                            <div class="row text-center g-3">
+                                <div class="col-12 col-sm-4">
+                                    <div class="p-3 border rounded h-100">
+                                        <h5 class="fw-bold text-success mb-1">Surveillance</h5>
+                                        <small>Bureaux de vote</small>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <div class="p-3 border rounded h-100">
+                                        <h5 class="fw-bold text-danger mb-1">Comptage</h5>
+                                        <small>Transparent</small>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <div class="p-3 border rounded h-100">
+                                        <h5 class="fw-bold text-warning mb-1">Observateurs</h5>
+                                        <small>Internationaux</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 order-1 order-lg-2 text-center">
+                            <img src="images/jeunesse.png" class="img-fluid rounded shadow"
+                                alt="Sécurité élections Cameroun">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- partenaires officiels charges de la bonne deroulation du scrutin -->
+            <div class="bg-light text-dark py-5">
+                <div class="container py-5">
+                    <div class="row align-items-center g-5">
+                        <div class="text-center">
+                            <span class="badge bg-success mb-2 fs-6">Partenaires</span>
+                            <span class="badge bg-warning mb-2 fs-6 ms-2">Institutionnels</span>
+                            <h2 class="display-6 fw-bold mt-3">Avec le soutien de nos partenaires officiels</h2>
+                            <p class="lead mt-4">
+                                Nos partenaires garantissent la transparence et le bon déroulement des élections à travers tout
+                                le Cameroun.
+                            </p>
+                            <div class="row text-center mt-4 g-3">
+                                <div class="col-3">
+                                    <img src="images/IRIC_Yaoundé_Logo.png" style="width: 200px;" class="img-fluid" alt="Gouvernement du Cameroun">
+                                </div>
+                                <div class="col-3">
+                                    <img src="images/scb.png" style="width: 200px;" class="img-fluid" alt="Gouvernement du Cameroun">
+                                </div>
+                                <div class="col-3">
+                                    <img src="images/afriland.png" style="width: 200px;" class="img-fluid" alt="Gouvernement du Cameroun">
+                                </div>
+                                <div class="col-3">
+                                    <img src="images/uba.jpg" style="width: 200px;" class="img-fluid" alt="Gouvernement du Cameroun">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </section>
+
+<!--espace candidat-->
+
+        <!-- <section id="candidat-page" class="page-content ">
+            <div class="row justify-content-center">
+                <div class="col-12 mb-4">
+                    <div id="welcome-section" class="text-center">
+                        <h1 class="display-4 fw-bolder"><i class="fas fa-trophy me-3"></i>Votre Candidature, Notre Futur !</h1>
+                        <p class="fs-5">Dépôsez votre dossier en toute simplicité et devenez un acteur du changement !</p>
+                    </div>
+                </div>
+                <div class="row justify-content-center"  >
+                    <div class="col-md-6 mb-3">
+                        <div class="">
+                            <h5 class="mx-5 mb-5 py-5"><span class="text-danger ">BIENVENUE</span><span class="text-warning"> Valeureux leader de demain ! </span></h5>
+                            
+                            <img src="images/candidat.jpg" class="img-fluid" alt="candidat" style="border-radius: 50%; height:500px; width: 500px;">
+                        </div>
+                    </div>
+                        
+                    <!formulaire de canditature-->
+<!-- 
+                    <div class="col-md-6">
+                        <div class="card shadow-lg card-wow border-success border-radius border-4">
+                            <div class="card-header bg-danger text-white ">
+                                    <h3 class=" mb-0"><i class="fas fa-id-card me-2"></i> Formulaire de Dépôt de Candidature</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="candidat-form">
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-nom" class="form-label">NOM</label>
+                                        <input type="text" class="form-control" id="candidat-nom" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-prenom" class="form-label">PRENOM</label>
+                                        <input type="text" class="form-control" id="candidat-prenom" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="dob2" class="form-label">AGE</label>
+                                        <input type="date" class="form-control" id="dob2" required>
+                                        <small class="form-text text-danger" id="age-warning-2" style="display:none;"><i class="fas fa-exclamation-triangle me-1"></i> Inscription impossible. Vous devez avoir au moins 21 ans.</small>
+                      
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-photo" class="form-label"> PHOTO(photo professionnelle) </label>
+                                        <input type="file" class="form-control" id="candidat-photo" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-slogan" class="form-label">SLOGAN (Qui inspire confiance)</label>
+                                        <input type="text" class="form-control" id="candidat-slogan" placeholder="Ex: Ensemble pour un Cameroun Nouveau" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-type-election" class="form-label">Type d'Élection Visée</label>
+                                        <select class="form-select" id="candidat-type-election" required>
+                                            <option value="">Sélectionner...</option>
+                                            <option value="presidentielle">Présidentielle</option>
+                                            <option value="municipal">Municipales</option>
+                                            <option value="legislatives">Législatives</option>
+                                            <option value="senatoriales">Sénatoriales</option>
+                                            <option value="regionale">Régionales</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-warning btn-lg shadow-sm " id="candidat-btn"><i class="fas fa-check-circle me-2"></i> Valider ma Candidature</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> - -->
+            
+
+    <section id="candidat-page" class="py-5 page-content"> <!-- py-5 : padding vertical (espacement haut et bas) -->
+           <div class="bg-dark text-white py-5 text-center mb-4">
+        <div class="container"> <!-- Conteneur pour centrer le contenu -->
+            <!-- Badge/étiquette "Candidature Officielle" avec le drapeau camerounais -->
+            <span class="badge bg-warning mb-3">🇨🇲 Candidature Officielle</span>
+            <!-- Titre principal de la page -->
+            <h1 class="fw-bold">Devenir Candidat aux Élections</h1>
+            <!-- Sous-titre/description -->
+            <p class="lead mt-3">
+                Cette demande doit respecter les exigences officielles en vigueur au Cameroun.
+            </p>
+        </div>
+        </div>
+       
+                    <!--formulaire de canditature-->
+                    <div class="container">
+                        <div class="card shadow-lg card-wow border-success border-radius border-4">
+                            <div class="card-header bg-danger text-white ">
+                                    <h3 class=" mb-0"><i class="fas fa-id-card me-2"></i> Formulaire de Dépôt de Candidature</h3>
+                            </div>
+                            <div class="card-body">
+                                <form id="candidat-form">
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-nom" class="form-label">NOM</label>
+                                        <input type="text" class="form-control" id="candidat-nom" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-prenom" class="form-label">PRENOM</label>
+                                        <input type="text" class="form-control" id="candidat-prenom" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-age" class="form-label">AGE</label>
+                                        <input type="date" class="form-control" id="dob2" required>
+                                        <small class="form-text text-danger" id="age-warning-2" style="display:none;"><i class="fas fa-exclamation-triangle me-1"></i> Inscription impossible. Vous devez avoir au moins 21 ans.</small>
+                      
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-photo" class="form-label"> PHOTO(photo professionnelle) </label>
+                                        <input type="file" class="form-control" id="candidat-photo" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-slogan" class="form-label">SLOGAN (Qui inspire confiance)</label>
+                                        <input type="text" class="form-control" id="candidat-slogan" placeholder="Ex: Ensemble pour un Cameroun Nouveau" required>
+                                    </div>
+                                    <div class="mb-2 p-3">
+                                        <label for="candidat-type-election" class="form-label">Type d'Élection Visée</label>
+                                        <select class="form-select" id="candidat-type-election" required>
+                                            <option value="">Sélectionner...</option>
+                                            <option value="presidentielle">Présidentielle</option>
+                                            <option value="municipal">Municipales</option>
+                                            <option value="legislatives">Législatives</option>
+                                            <option value="senatoriales">Sénatoriales</option>
+                                            <option value="regionale">Régionales</option>
+                                        </select>
+                                    </div>
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-warning btn-lg shadow-sm "><i class="fas fa-check-circle me-2"></i> Valider ma Candidature</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div> <!-- Fin de la section formulaire -->
+
+            <!-- recepisse de candidature -->
+            <div id="receipt-message" class="alert-wow alert-success mt-5 d-none" role="alert">
+                <h4><i class="fas fa-stamp me-2"></i> Candidature Officiellement Enregistrée !</h4>
+                <p>Votre dossier est complet. Voici votre <span class="text-success">**Récépissé de Dépôt (REC-2025-4879)**</span> . Vous êtes un leader de demain !</p>
+            </div>
+        </section>
+
+        <!-- vote -->
+
+        <section id="vote-page" class="page-content" style="background-image: url(images/spirale.png); padding: 80px; ">
+            <h1 class="text-center mb-5 my-4 fw-bold text-green-cm"><i class="fas fa-lock me-2"></i> Espace de Vote Sécurisé</h1>
+            
+            <div id="login-form-container" class="row justify-content-center">
+                <div class="col-md-6">
+                    <div class="card shadow-lg border-danger card-wow">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="mb-0"><i class="fas fa-key me-2"></i> Connexion Électeur</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="voter-login-form">
+                                <div class="mb-3">
+                                    <label for="voter-id" class="form-label">Identifiant Électeur</label>
+                                    <input type="text" class="form-control" id="voter-id" placeholder="Ex: ELEC-2025-001" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="voter-password" class="form-label">Mot de Passe</label>
+                                    <input type="password" class="form-control" id="voter-password" required>
+                                </div>
+                                <div class="d-grid">
+                                    <button type="submit" class="btn btn-green-cm btn-lg shadow-sm"><i class="fas fa-sign-in-alt me-2"></i> Se Connecter & Voter</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--presentation des candidats aux elections -->
+
+            <div id="voting-area" class="d-none">
+                <h2 class="text-center mb-5 text-danger">Votre Scrutin : Élection <span id="current-election-badge" class="badge bg-warning text-warning fs-5">Présidentielle</span></h2>
+                <div class="photo-candidats" id="presidentielle"></div>
+                <div class="row" id="candidates-list">
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card shadow card-wow h-100 text-center border-success border-2">
+                            <img src="images/candidat-B.jpg" class="card-img-top p-3 rounded-top" alt="Candidat A">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold ">Candidat A</h5>
+                                <p class="card-text text-muted">"Le coeur au peuple , les actes au pouvoir : La Richesse , la lumiere , l'espoir : Le Jaune de l'etoile "</p>
+                                <button class="btn btn-warning vote-btn mt-2" data-candidate="A"><i class="fas fa-check me-2"></i> Voter pour le carton jaune</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card shadow card-wow h-100 text-center border-danger border-2">
+                            <img src="images/candidat-A.jpg" class="card-img-top p-3 rounded-top" alt="Candidat B">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">Candidat B</h5>
+                                <p class="card-text text-muted">"L'Espoir d'une nation, l'avenir d'un peuple. Le futur en marche avec vous: Tous pour Le vert"</p>
+                                <button class="btn btn-green-cm vote-btn mt-2" data-candidate="B"><i class="fas fa-check me-2"></i> Voter pour le carton vert</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card shadow card-wow h-100 text-center border-warning border-2">
+                            <img src="images/candidat-C.jpg" class="card-img-top p-3 rounded-top" alt="Candidat C">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">Candidat C</h5>
+                                <p class="card-text text-muted">" Brisons les vieux schemas . Ensemble, construisons l'avenir de demain: Le Rouge, c'est l'Avenir"</p>
+                                <button class="btn btn-danger vote-btn mt-2" data-candidate="C"><i class="fas fa-check me-2"></i> Voter pour le carton Rouge</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="vote-success-message" class="alert-wow alert-info mt-5 d-none" role="alert">
+                <h4><i class="fas fa-gift me-2"></i> Vote Enregistré avec Succès !</h4>
+                <p class="lead">Merci d'avoir exercé votre droit de citoyen. Votre choix est sécurisé et irréversible.</p>
+                <button class="btn btn-primary btn-lg mt-3 shadow-lg" onclick="showPage('resultat-page')"><i class="fas fa-chart-bar me-2"></i> Voir l'Évolution des Résultats</button>
+            </div>
+        </section>
+
+
+        <!--evolution des votes pour l'election en cours -->
+        <section class="page-content" id="resultat-page" style="background-image: url(images/spirale.png);">
+            <div id="results-evolution" class="mt-5 ">
+                <h2 class="text-center mb-5 fw-bold text-danger"><i class="fas fa-chart-line me-2"></i> Évolution des Votes pour l'Élection en cours <span id="results-election-type" class="badge bg-warning text-dark fs-4 text-uppercase"></span></h2>
+                
+                <div class="row text-center justify-content-center mb-5">
+                    <div class="col-md-4">
+                        <div class="circle-stat" style="background-color: #007A5E;">
+                            <div class="value" id="total-inscrits-circle">15M+</div>
+                            <div class="label card-title"><i class="fas fa-user-check me-1"></i> Inscrits</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="circle-stat" style="background-color: #CE1126;">
+                            <div class="value" id="total-votants-circle">9M+</div>
+                            <div class="label"><i class="fas fa-vote-yea me-1"></i> Votants</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="circle-stat" style="background-color: #FCD116; color: black !important;">
+                            <div class="value" id="taux-participation-circle">60%</div>
+                            <div class="label"><i class="fas fa-percent me-1"></i> Participation</div>
+                        </div>
+                    </div>
+                </div>
+
+           <!--resultats provisoires par candidat-->  
+        
+                <div class="card shadow-lg border-primary card-wow">
+                    <div class="card-header bg-primary text-success">
+                        <h4 class="mb-0"><i class="fas fa-percentage me-2"></i> Résultats Provisoires par Candidat</h4>
+                    </div>
+                    <div class="card-body" id="candidate-stats">
+                        <p class="small text-muted text-end">Les résultats affichés sont à propos de l'élection <span id="election-result-type-detail"></span></p>
+
+                        <!-- election presidentielle -->
+                        <div class="election-candidat" id="presidentielle">
+                            <div class="my-3">
+                                <h5 class="mb-1">Candidat A - 34%</h5>
+                                <div class="progress" style="height: 35px;">
+                                    <div class="progress-bar bg-warning progress-bar-striped progress-bar-animated" role="progressbar" style="width: 34%;" aria-valuenow="34" aria-valuemin="0" aria-valuemax="100">3 060K votes</div>
+                                </div>
+                            </div>
+                            <div class="my-3">
+                                <h5 class="mb-1 ">Candidat B - 53%</h5>
+                                <div class="progress" style="height: 35px;">
+                                    <div class="progress-bar bg-light progress-bar-striped progress-bar-animated text-dark" role="progressbar" style="width: 53%;" aria-valuenow="53" aria-valuemin="0" aria-valuemax="100">4 770K votes</div>
+                                </div>
+                            </div>
+                            <div class="my-3">
+                                <h5 class="mb-1">Candidat C - 3%</h5>
+                                <div class="progress" style="height: 35px;">
+                                    <div class="progress-bar bg-orange progress-bar-striped progress-bar-animated" role="progressbar" style="width: 3%;" aria-valuenow="3" aria-valuemin="0" aria-valuemax="100">270K votes</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+<!-- aide -->
+        <section id="help-page" class="page-content" >
+            <h1 class="text-center my-4 text-white bg-danger border-bottom border-warning border-1 py-2"><i class="fas fa-book-open me-2"></i> Guide d'Aide Simplifié (Électeurs)</h1>
+            <div class=" py-5" id="inscription">
+                <div class="container">
+                    <div class="text-center mb-5">
+                        <span class="badge bg-success fs-6 mb-3">Guide pratique</span>
+                        <h2 class="fw-bold mb-3">Comment s'inscrire comme électeur</h2>
+                        <p class="text-muted">Suivez ces étapes simples pour vous inscrire</p>
+                    </div>
+                    <div class="row">
+                        <!-- ÉTAPE 1 -->
+                        <div class="col-lg-6 mb-4"> 
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            1
+                                        </div>
+                                        <div>
+                                            <h4 class="fw-bold">Accédez au formulaire</h4>
+                                            <p class="mb-3">
+                                                Cliquez sur "Devenir Électeur" dans le menu principal ou accédez directement à
+                                                la page 
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ÉTAPE 2 -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            2
+                                        </div>
+                                        <div>
+                                            <h4 class="fw-bold">Remplissez vos informations</h4>
+                                            <p class="mb-3">
+                                                Complétez tous les champs obligatoires : nom, prénom, CNI, date de naissance,
+                                                coordonnées et localisation.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ÉTAPE 3 -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            3
+                                        </div>
+                                        <div>
+                                            <h4 class="fw-bold">Téléchargez les pièces</h4>
+                                            <p class="mb-3">
+                                                Joignez les documents requis : photo d'identité, copie de la CNI et justificatif
+                                                de résidence.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- ÉTAPE 4 -->
+                        <div class="col-lg-6 mb-4">
+                            <div class="card h-100 border-0 shadow-sm">
+                                <div class="card-body p-4">
+                                    <div class="d-flex align-items-start">
+                                        <div class="bg-success text-white rounded-circle d-flex align-items-center justify-content-center me-3"
+                                            style="width: 40px; height: 40px;">
+                                            4
+                                        </div>
+                                        <div>
+                                            <h4 class="fw-bold">Soumettez et suivez</h4>
+                                            <p class="mb-3">
+                                                Validez votre inscription et notez votre numéro de dossier. Vous recevrez une
+                                                confirmation par email.
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center mb-4 bg-light">
+                <div class="col-md-10">
+                    <div class="accordion" id="helpAccordion">
+                        <p class=" lead text-green-cm text-center my-4">Trouvez ici toutes les informations necessaires pour vous inscrire ,voter , et Accéder aux resultats Officiels apres delivration du scrutin </p>
+                        <div class="accordion-item shadow-lg">
+                            <h2 class="accordion-header"><button class="accordion-button bg-green-cm text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"><i class="fas fa-1 me-2"></i> **S'Inscrire (Moins de 18 ans)**</button></h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show"><div class="accordion-body">Remplissez le formulaire d'inscription sur la Page d'Accueil. N'oubliez pas que votre **Date de Naissance** est vérifiée. Si vous avez moins de 18 ans, le système **refusera** votre inscription et affichera un message d'alerte.</div></div>
+                        </div>
+                        <div class="accordion-item shadow-lg mt-3">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed bg-danger text-white fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo"><i class="fas fa-2 me-2"></i> **Accéder au Vote (Identifiants)**</button></h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse"><div class="accordion-body">Après l'inscription réussie, vous recevez un **Identifiant** et un **Mot de Passe**. Rendez-vous sur la page **Vote & Résultats** et entrez ces informations exactes pour vous connecter. **Une vérification stricte est effectuée**.</div></div>
+                        </div>
+                        <div class="accordion-item shadow-lg mt-3">
+                            <h2 class="accordion-header"><button class="accordion-button collapsed bg-warning text-dark fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree"><i class="fas fa-3 me-2"></i> **Fonctionnement des Résultats**</button></h2>
+                            <div id="collapseThree" class="accordion-collapse collapse"><div class="accordion-body">Les résultats affichés après votre vote sont en temps réel et **spécifiques au Type d'Élection** que vous avez choisi lors de l'inscription (Présidentielle, Municipale, etc.).</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--  CONTACT ET ASSISTANCE  supplementaire-->
+            <div class="text-dark  mt-5 py-5">
+                <div class="container">
+                    <div class="text-center mb-5">
+                        <span class="badge bg-warning text-dark fs-6 mb-3">Assistance</span>
+                        <h2 class="fw-bold mb-3">Besoin d'aide supplémentaire ?</h2>
+                        <p class="lead">Notre équipe est à votre disposition</p>
+                    </div>
+                    <div class="row g-4"> 
+                        <div class="col-md-4">
+                            <div class="card bg-primary text-white border-0 h-100"> 
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-phone-alt display-4 mb-3"></i> 
+                                    <h4 class="card-title fw-bold">Téléphone</h4>
+                                    <p class="card-text">Appelez notre centre d'assistance</p>
+                                    <a href="tel:+237699 000 000" class="btn btn-light rounded-pill">+237 699 000 000</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card bg-success text-white border-0 h-100"> 
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-envelope display-4 mb-3"></i>
+                                    <h4 class="card-title fw-bold">Email</h4>
+                                    <p class="card-text">Écrivez-nous pour toute question</p>
+                                    <a href="mailto:assistance@elections.cm"
+                                        class="btn btn-light rounded-pill">assistance@elections.cm</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card bg-warning text-dark border-0 h-100"> 
+                                <div class="card-body text-center p-4">
+                                    <i class="fas fa-map-marker-alt display-4 mb-3"></i>
+                                    <h4 class="card-title fw-bold">Centres Élections CM</h4>
+                                    <p class="card-text">Rendez-vous dans nos centres</p>
+                                    <a href="#" class="btn btn-dark rounded-pill">Trouver un centre</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-5">
+                        <p class="mb-3">Horaires d'ouverture : Lundi - Vendredi, 8h00 - 17h00</p>
+                        <p class="small">Temps de réponse moyen : 24 heures</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+    </main>
+
+ <!-- footer -->
+    <footer class="text-white " style="background:#121212;">
+        <div class="container">
+            <div class="row align-items-center">
+                <!-- LOGO + DESCRIPTION -->
+                <div class="col-lg-4 col-md-6">
+                    <h5 class="fw-bold text-warning">
+                        ÉLECTIONS <span class="text-danger">CM</span>
+                    </h5>
+                    <p class="small text-light">
+                        Plateforme officielle de gestion des élections au Cameroun 🇨🇲.
+                        Transparence, sécurité et accessibilité pour tous les citoyens.
+                    </p>
+                    <!-- RÉSEAUX SOCIAUX -->
+                    <div class="d-flex gap-3 mt-3">
+                        <a href="#" class="text-white fs-5"><i class="bi bi-facebook"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-youtube"></i></a>
+                        <a href="#" class="text-white fs-5"><i class="bi bi-whatsapp"></i></a>
+                    </div>
+                </div>
+                <!-- CONTACT -->
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="text-warning mb-3">Contact officiel</h6>
+                    <p class="small mb-1"><i class="bi bi-geo-alt-fill"></i> Douale, Cameroun</p>
+                    <p class="small mb-1"><i class="bi bi-envelope-fill"></i> groupe2@elections.cm</p>
+                    <p class="small"><i class="bi bi-telephone-fill"></i> +237 699 000 000</p>
+                </div>
+
+            </div>
+        </div>
+        <!-- BARRE BAS DE PAGE -->
+        <div class="bg-green-cm text-white text-center py-3 mt-5">
+           <div class="container">
+               <p class="mb-0 small"><i class="fas fa-shield-alt me-1"></i> Plateforme Sécurisée. &copy; 2025 E-Vote Cameroun.</p>
+           </div>
+        </div>
+    </footer>
+
+
+<!-- formulaire inscription electeur -->
+
+    <div class="modal fade" id="inscriptionModal" tabindex="-1" aria-labelledby="inscriptionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-green-cm text-white">
+                    <h5 class="modal-title" id="inscriptionModalLabel"><i class="fas fa-id-badge me-2"></i> Inscription Électeur</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="voter-registration-form">
+                        <div class="mb-3"><label for="email" class="form-label">E-mail</label><input type="email" class="form-control" id="email" required></div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3"><label for="nom" class="form-label">Nom</label><input type="text" class="form-control" id="nom" required></div>
+                            <div class="col-md-6 mb-3"><label for="prenom" class="form-label">Prénom</label><input type="text" class="form-control" id="prenom" required></div>
+                        </div>
+                        <div class="mb-3"><label for="cni" class="form-label">Numéro de CNI</label><input type="text" class="form-control" id="cni" required></div>
+                        <div class="mb-3">
+                            <label for="dob" class="form-label">Date de Naissance</label>
+                            <input type="date" class="form-control" id="dob" required>
+                            <small class="form-text text-danger" id="age-warning" style="display:none;"><i class="fas fa-exclamation-triangle me-1"></i> Inscription impossible. Vous devez avoir au moins 18 ans.</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="election-type" class="form-label">Type d'Élection (pour attribution ID)</label>
+                            <select class="form-select" id="election-type" required>
+                                <option value="">Sélectionner...</option>
+                                <option value="Présidentielle">Présidentielle</option>
+                                <option value="Municipales">Municipales</option>
+                                <option value="Législatives">Législatives</option>
+                                <option value="Sénatoriales">Sénatoriales</option>
+                                <option value="Régionales">Régionales</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-between mt-4">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times-circle me-1"></i> Annuler</button>
+                            <button type="submit" class="btn btn-warning shadow-sm"><i class="fas fa-check-circle me-1"></i> Valider les informations</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   <!--validation inscription electeur (modal)--> 
+
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title" id="successModalLabel"><i class="fas fa-star me-2"></i> Inscription Réussie !!!</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center alert-wow alert-warning">
+                    <p class="lead text-dark">Félicitations ! Votre engagement citoyen est validé.</p>
+                    <hr>
+                    <p class="text-start">Voici vos identifiants :</p>
+                    <div class="p-3 bg-light rounded text-center mb-3 border border-dark">
+                        <p class="mb-1"><strong>Identifiant :</strong> <span class="fw-bold text-success" id="provided-id">ELEC-2025-001</span></p>
+                        <p class="mb-0"><strong>Mot de Passe :</strong> <span class="fw-bold text-danger" id="provided-password">Pass@2025</span></p>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-center flex-column" id="success-modal-footer">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/bootstrap.bundle.js"></script>
+
+
+    <script>
+        // JS pour la logique de l'interface (simulations de backend)
+
+        let isRegistered = false;
+        let hasVoted = false;
+        let userCredentials = {}; // Stocke ID, Pass, et Type d'élection
+        let selectedElectionType = 'Tous Types'; 
+
+        // Fonction pour changer de page (vue)
+        function showPage(pageId) {
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+            window.scrollTo(0, 0); // Remonter en haut de page
+        }
+
+        // Fonction pour rediriger vers la page de vote après l'inscription
+        function proceedToVote() {
+            showPage('vote-page');
+            // Pré-remplir les champs de connexion pour la commodité
+            document.getElementById('voter-id').value = userCredentials.id;
+            document.getElementById('voter-password').value = userCredentials.pass;
+            document.getElementById('login-form-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 1. Logique d'Inscription (Validation Age et Soumission)
+        document.getElementById('voter-registration-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const dobInput = document.getElementById('dob').value;
+            const dob = new Date(dobInput);
+            const today = new Date();
+            const age = today.getFullYear() - dob.getFullYear();
+            const m = today.getMonth() - dob.getMonth();
+            
+       
+            // Vérification de l'âge (au moins 18 ans)
+            if (age < 18 || (age === 18 && m < 0) || (age === 18 && m === 0 && today.getDate() < dob.getDate())) {
+                document.getElementById('age-warning').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('age-warning').style.display = 'none';
+            }
+
+
+            // SIMULATION : Génération d'ID/Pass et stockage
+            const newId = `ELEC-${new Date().getFullYear()}-${Math.floor(Math.random() * 900) + 100}`;
+            const newPass = `Pass@${Math.floor(Math.random() * 9000) + 1000}`;
+            const electionType = document.getElementById('election-type').value;
+
+            userCredentials = { id: newId, pass: newPass, electionType: electionType };
+            isRegistered = true;
+            selectedElectionType = electionType; 
+
+            // Désactivation du bouton d'inscription
+            document.getElementById('inscription-btn').disabled = true;
+            document.getElementById('inscription-btn').textContent = "Inscription Fermée (Effectuée)";
+            document.getElementById('inscription-btn').classList.remove('btn-green-cm');
+            document.getElementById('inscription-btn').classList.add('btn-secondary');
+
+            // Mise à jour du Modal de succès
+            document.getElementById('provided-id').textContent = newId;
+            document.getElementById('provided-password').textContent = newPass;
+            
+            // Logique "Voulez-vous voter maintenant ?"
+            document.getElementById('success-modal-footer').innerHTML = `
+                <p class="lead fw-bold mb-3 text-dark">Voulez-vous voter maintenant ?</p>
+                <button type="button" class="btn btn-green-cm btn-lg me-2 shadow" data-bs-dismiss="modal" onclick="proceedToVote()"><i class="fas fa-arrow-alt-circle-right me-2"></i> Accéder au vote</button>
+                <button type="button" class="btn btn-secondary btn-lg shadow-sm" data-bs-dismiss="modal" onclick="showPage('home-page')"><i class="fas fa-home me-2"></i> Non, revenir à l'accueil</button>
+            `;
+
+            // Fermeture du formulaire et affichage du succès
+            const inscriptionModal = bootstrap.Modal.getInstance(document.getElementById('inscriptionModal'));
+            inscriptionModal.hide();
+            const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+            successModal.show();
+        });
+        
+        // 2. Logique Candidat
+        document.getElementById('candidat-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const dob2Input = document.getElementById('dob2').value;
+            const dob2 = new Date(dob2Input);
+            const today = new Date();
+            const age = today.getFullYear() - dob2.getFullYear();
+            const m = today.getMonth() - dob2.getMonth();
+            
+       
+            // Vérification de l'âge (au moins 21 ans)
+            if (age < 21 || (age === 21 && m < 0) || (age === 21 && m === 0 && today.getDate() < dob2.getDate())) {
+                document.getElementById('age-warning-2').style.display = 'block';
+                return;
+            } else {
+                document.getElementById('age-warning-2').style.display = 'none';
+            }
+
+            const receiptMessage = document.getElementById('receipt-message');
+            receiptMessage.classList.remove('d-none');
+            receiptMessage.scrollIntoView({ behavior: 'smooth' });
+
+            // Désactivation du bouton de candidature
+            document.getElementById('candidat-btn').disabled = true;
+            document.getElementById('candidat-btn').textContent = "Candidature Fermée (Effectuée)";
+            document.getElementById('candidat-btn').classList.remove('btn-green-cm');
+            document.getElementById('candidat-btn').classList.add('btn-secondary');
+
+        });
+
+        // 3. Logique de Connexion au Vote (Vérification Waouh)
+        document.getElementById('voter-login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const enteredId = document.getElementById('voter-id').value;
+            const enteredPassword = document.getElementById('voter-password').value;
+
+            if (!isRegistered) {
+                alert('🛑 Erreur de Connexion: Vous devez d\'abord vous inscrire sur la page d\'accueil.');
+                return;
+            }
+            
+            // Vérification des identifiants (simulée)
+            if (enteredId === userCredentials.id && enteredPassword === userCredentials.pass) { 
+                document.getElementById('login-form-container').classList.add('d-none');
+                document.getElementById('voting-area').classList.remove('d-none');
+                
+                // Mise à jour du type d'élection affiché dans l'espace de vote
+                document.getElementById('current-election-badge').textContent = userCredentials.electionType;
+                document.getElementById('voting-area').scrollIntoView({ behavior: 'smooth' });
+                alert('✅ Connexion Réussie ! Bienvenue dans votre espace de vote sécurisé.');
+            } else {
+                alert('❌ Erreur de Connexion: Identifiant ou Mot de Passe incorrect. Veuillez vérifier vos identifiants fournis lors de l\'inscription.');
+            }
+        });
+
+        // Gestion du vote
+        document.querySelectorAll('.vote-btn').forEach(button => {
+            button.addEventListener('click', function() {
+        //         if (!isRegistered) {
+        //             alert('🛑 Veuillez vous connecter ou vous inscrire avant de voter.');
+        //             return;
+        //         }
+        //         if (hasVoted) {
+        //             alert('🛑 Vote Refusé: Vous avez déjà voté pour cette élection !');
+        //             return;
+        //         }
+                
+                const candidateName = this.getAttribute('data-candidate');
+        //         hasVoted = true;
+                
+                // Masquer la zone de vote
+                //document.getElementById('voting-area').classList.add('d-none');
+
+                // Afficher le message de succès "Waouh"
+                const successMsg = document.getElementById('vote-success-message');
+                successMsg.querySelector('p').innerHTML = `Merci d'avoir voté ! Votre choix pour le candidat **${candidateName}** est enregistré.`;
+                successMsg.classList.remove('d-none');
+                successMsg.scrollIntoView({ behavior: 'smooth' });
+
+                // Désactiver tous les boutons de vote
+                document.querySelectorAll('.vote-btn').forEach(btn => btn.disabled = true);
+            });
+        });
+
+        // Afficher les résultats après le vote
+        function showResults() {
+            document.getElementById('vote-success-message').classList.add('d-none');
+            const resultsDiv = document.getElementById('results-evolution');
+            
+            // Mise à jour dynamique du type d'élection sur la page des résultats
+            document.getElementById('results-election-type').textContent = userCredentials.electionType;
+            document.getElementById('election-result-type-detail').textContent = userCredentials.electionType;
+            
+            resultsDiv.classList.remove('d-none');
+            resultsDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        
+        // function pour afficher le compte a reboure pour le prochain scrutin
+        function startCountDown(days, hours, minutes, seconds) {
+            const countdownNum = document.querySelectorAll('.countdown-num');
+
+            let totalTime = (days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds) * 1000;
+            const interval = setInterval(() => {
+                if(totalTime === 0) {
+                    clearInterval(interval);
+                    countdownNum.style.color = 'red';
+                    return;
+                }
+                totalTime -= 1000;
+
+                const d = Math.floor(totalTime / (1000 * 60 * 60 * 24));
+                const h = Math.floor((totalTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((totalTime % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((totalTime % (1000 * 60)) / 1000);
+
+                document.getElementById('days').textContent = d.toString().padStart(2, '0');
+                document.getElementById('hours').textContent = h.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = m.toString().padStart(2, '0');
+                document.getElementById('seconds').textContent = s.toString().padStart(2, '0');
+            }, 1000);
+        }
+        // initialization de la function
+        startCountDown(1, 0, 2, 48);
+
+    </script>
+
+</body>
+</html>
